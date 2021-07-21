@@ -51,15 +51,16 @@ class YaUploader:
         self.token = token
 
     def upload(self, file_path):
-        headers = {"Authorization": self.token}
+        headers = {'Accept': 'application/json', "Authorization": self.token}
         params = {'path': file_path}
         response = requests.get('https://cloud-api.yandex.net/v1/disk/resources/upload', params=params, headers=headers)
-        return response.json()
+        put_url = response.json().get('href')
+        files = {'file': open(file_path, 'rb')}
+        response = requests.put(put_url, files=files, headers=headers)
+        print(response)
 
 
 if __name__ == '__main__':
     uploader = YaUploader('')
-    file_path = os.path.abspath('Ivan.txt')
-    print(file_path)
-    result = uploader.upload(file_path)
-    print(result)
+    file_path = 'Ivan.txt'
+    uploader.upload(file_path)
